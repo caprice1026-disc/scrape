@@ -1,6 +1,5 @@
 import os
 import csv
-import json
 import datetime
 import requests
 from time import sleep
@@ -10,9 +9,9 @@ import openai
 from bs4 import BeautifulSoup
 
 # GoogleとOpenAIのAPI設定
-GOOGLE_API_KEY = "your_google_api_key_here"
-CUSTOM_SEARCH_ENGINE_ID = "your_custom_search_engine_id_here"
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+CUSTOM_SEARCH_ENGINE_ID = os.environ.get("CUSTOM_SEARCH_ENGINE_ID")
+openai_api_key = os.environ.get("OPENAI_API_KEY")
 
 # データ保存用ディレクトリ
 DATA_DIR = 'data'
@@ -28,6 +27,7 @@ def getSearchResponse(keyword):
             q=keyword,
             cx=CUSTOM_SEARCH_ENGINE_ID,
             lr='lang_ja',
+            #検索結果の表示される量を指定
             num=10
         ).execute()
         return response['items']
@@ -75,6 +75,8 @@ with open('search_results.csv', 'w', newline='', encoding='utf-8') as csvfile:
         search_keywords = completion.choices[0].message['content'].split(", ")
 
     # 各検索ワードでGoogle検索を行う
+    #request_limit = 10  # リクエストの上限数
+    #request_count = 0  # リクエストのカウンター
     for keyword in search_keywords:
         print(f"Searching for: {keyword}")
 
@@ -85,6 +87,9 @@ with open('search_results.csv', 'w', newline='', encoding='utf-8') as csvfile:
         for result in search_results:
             title = result['title']
             url = result['link']
+             # リクエストのカウンターを増やす。リクエストの上限数に達したら終了。
+             # 一時的に機能は止めてあるが修正がいる場合はコメントアウトを外すこと。
+            #request_count += 1
 
             # クラウドフレアで保護されているか確認
             try:
