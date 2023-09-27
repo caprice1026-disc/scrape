@@ -117,9 +117,9 @@ with open('search_results.csv', 'w', newline='', encoding='utf-8') as csvfile:
 
             # ウェブサイトの内容を要約。この部分をchatGPTを使用して要約する。要約用の関数を用意しておくこと。
             summary = getSummary(website_content)
-
             # CSVに保存
-            csvwriter.writerow([keyword, title, url, summary])
+            date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            csvwriter.writerow([keyword, title, url, summary, date])
             print(f"Title: {title}")
             print(f"URL: {url}")
             print(f"Summary: {summary}")
